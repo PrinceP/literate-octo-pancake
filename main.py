@@ -5,6 +5,7 @@ import time
 import mediapipe as mp
 import numpy as np
 import drawing_utils
+import datetime
 
 # Grabbing the Holistic Model from Mediapipe and
 # Initializing the Model
@@ -24,13 +25,17 @@ capture = cv2.VideoCapture(0)
 previousTime = 0
 currentTime = 0
 
+point_inside_lip_flag = False
+show_time = 3 # seconds
+text_showing = False
+text_off = None
 
 while capture.isOpened():
 	# capture frame by frame
 	ret, frame = capture.read()
 
 	# resizing the frame for better view
-	frame = cv2.resize(frame, (800, 600))
+	frame = cv2.resize(frame, (1280, 720))
 
 	# Converting the from BGR to RGB
 	image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -80,7 +85,22 @@ while capture.isOpened():
 		index_finger_tip = index_finger_tip[0]
 		point_inside_lip = cv2.pointPolygonTest(lip_points, index_finger_tip, False)
 		if point_inside_lip >= 0:
-			cv2.putText(image, "Finger in Lip", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+			point_inside_lip_flag = True
+
+	if point_inside_lip_flag:
+		cv2.putText(image, "Finger in Lip", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+		point_inside_lip_flag = False
+
+	# Timing logic
+	# if point_inside_lip_flag:
+	# 	if not text_showing:
+	# 		text_showing = True
+	# 		text_off = datetime.datetime.now() +  datetime.timedelta(seconds=show_time)
+	# 		point_inside_lip_flag = False
+	
+	# if text_off and datetime.datetime.now() < text_off:
+	# 	cv2.putText(image, "Finger in Lip", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+	# 	text_showing = False
 
 	# Drawing Right hand Land Marks
 	# mp_drawing.draw_landmarks(
