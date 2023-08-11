@@ -1,4 +1,4 @@
-# Mediapipe Python Data
+# Mediapipe Python Data Analysis
 
 ## Hand Landmarks
 
